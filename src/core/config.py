@@ -5,26 +5,25 @@ from dotenv import find_dotenv
 
 from core.logger import LOGGING
 
-# Применяем настройки логирования
+
 logging_config.dictConfig(LOGGING)
 
 
 class Settings(BaseSettings):
-    # Название проекта. Используется в Swagger-документации
     PROJECT_NAME: str = 'movies'
 
-    # Настройки Redis
     REDIS_HOST: str = 'redis'
     REDIS_PORT: int = 6379
     REDIS_CACHE_EXP_SECS: int = 300
 
-    # Настройки Elasticsearch
     ELASTIC_HOST: str = 'elasticsearch'
     ELASTIC_PORT: int = 9200
 
     jwt_secret_key: str = 'some_key'
     jwt_algorithm: str = 'HS256'
 
+    jaeger_agent_host_name: str = 'jaeger'
+    jaeger_agent_port: int = 6831
 
     class Config:
         env_file = find_dotenv()
