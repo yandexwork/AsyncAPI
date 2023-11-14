@@ -8,6 +8,7 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -28,12 +29,14 @@ async def lifespan(app: FastAPI):
 
 
 def configure_tracer() -> None:
-    trace.set_tracer_provider(TracerProvider())
+    trace.set_tracer_provider(TracerProvider(
+        resource=Resource.create({SERVICE_NAME: "movies.api"})
+    ))
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(
             JaegerExporter(
-                agent_host_name='localhost',
-                agent_port=6831,
+                agent_host_name=settings.jaeger_agent_host_name,
+                agent_port=settings.jaeger_agent_port
             )
         )
     )
